@@ -4,3 +4,4 @@ This container is a backport of [Drupal LEMP](https://hub.docker.com/r/attr/drup
 
 1. Web server - Apache
 2. PHP version - 5.6
+3. Host user name - lamp

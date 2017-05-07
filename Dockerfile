@@ -15,7 +15,7 @@ ENV MYSQL_ROOT_PASS=123 \
 
 # Install required packages.
 RUN apt-get update && apt-get -y install --no-install-recommends apt-utils \
-    sudo curl net-tools wget git vim zip unzip mc sqlite3 tree ncdu \
+    sudo curl net-tools wget git vim zip unzip mc sqlite3 tree ncdu less \
     silversearcher-ag bsdmainutils man html2text bash-completion ca-certificates \
     apache2 mysql-server mysql-client libapache2-mod-php5 php5 php5-mysql \
     php5-curl php5-gd php5-json php5-cgi php5-xdebug php-apc php-pear

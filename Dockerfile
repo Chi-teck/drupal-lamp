@@ -90,11 +90,14 @@ RUN (cd /home/$HOST_USER_NAME/.drush && wget https://raw.githubusercontent.com/C
 # Enable drush completion.
 COPY drush.complete.sh /etc/bash_completion.d/drush.complete.sh
 
-# Install Drupal RC
+# Install DrupalRC.
 RUN url=https://raw.githubusercontent.com/Chi-teck/drupalrc/master && \
-    wget -O /etc/drupal.bashrc $url/.drupalrc && \
-    echo source /etc/drupal.bashrc >> /etc/bash.bashrc && \
-    wget -P /etc/bash_completion.d $url/drupal.complete.sh
+    wget -O /etc/drupalrc $url/drupalrc && echo source /etc/drupalrc >> /etc/bash.bashrc && \
+    wget -O /etc/bash_completion.d/drupal.complete.sh $url/drupal.complete.sh && \
+    mkdir /usr/share/drupal-projects && \
+    wget -P /usr/share/drupal-projects $url/drupal-projects/d6.txt && \
+    wget -P /usr/share/drupal-projects $url/drupal-projects/d7.txt && \
+    wget -P /usr/share/drupal-projects $url/drupal-projects/d8.txt
 
 # Install phpcs
 RUN wget https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar && chmod +x phpcs.phar && mv phpcs.phar /usr/local/bin/phpcs

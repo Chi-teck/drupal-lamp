@@ -2,12 +2,13 @@ FROM debian:jessie
 
 # Set variables.
 ENV MYSQL_ROOT_PASS=123 \
-    DUMB_INIT_VERSION='1.2.0' \
-    DRUSH_VERSION='8.1.10' \
-    DCG_VERSION='1.15.1' \
-    PHPMYADMIN_VERSION='4.7.0' \
-    MAILHOG_VERSION='v0.2.1' \
-    MHSENDMAIL_VERSION='v0.2.0' \
+    DUMB_INIT_VERSION=1.2.0 \
+    DRUSH_VERSION=8.1.11 \
+    DCG_VERSION=1.15.1 \
+    PHPMYADMIN_VERSION=4.7.0 \
+    MAILHOG_VERSION=v1.0.0 \
+    MHSENDMAIL_VERSION=v0.2.0 \
+    PECO_VERSION=v0.5.1 \
     HOST_USER_NAME=lamp \
     HOST_USER_UID=1000 \
     HOST_USER_PASS=123 \
@@ -107,6 +108,12 @@ RUN cd /usr/share/php5 && drush dl coder && phpcs --config-set installed_paths /
 
 # Install DCG.
 RUN wget https://github.com/Chi-teck/drupal-code-generator/releases/download/$DCG_VERSION/dcg.phar && chmod +x dcg.phar && mv dcg.phar /usr/local/bin/dcg
+
+# Install Peco.
+RUN wget -P /tmp https://github.com/peco/peco/releases/download/$PECO_VERSION/peco_linux_amd64.tar.gz && \
+    tar -xvf /tmp/peco_linux_amd64.tar.gz -C /tmp && \
+    mv /tmp/peco_linux_amd64/peco /usr/local/bin/peco && \
+    chmod +x /usr/local/bin/peco
 
 # Install Node.js and NPM.
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - && apt-get install -y nodejs

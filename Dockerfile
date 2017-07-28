@@ -39,6 +39,9 @@ COPY sudoers /etc/sudoers
 # Change mysql root password.
 RUN service mysql start && mysqladmin -u root password $MYSQL_ROOT_PASS
 
+# Disable bind-address.
+RUN sed -i "s/bind-address/#bind-address/" /etc/mysql/my.cnf
+
 # Change PHP settings.
 COPY 20-development-apache.ini /etc/php5/apache2/conf.d/20-development.ini
 COPY 20-development-cli.ini /etc/php5/cli/conf.d/20-development.ini

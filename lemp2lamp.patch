@@ -25,9 +25,18 @@ index f909ee1..0000000
 -upload_max_filesize = 32M
 -sendmail_path = /usr/local/bin/mhsendmail
 diff --git a/Dockerfile b/Dockerfile
-index cce8683..950b425 100644
+index cce8683..d9132ab 100644
 --- a/Dockerfile
 +++ b/Dockerfile
+@@ -9,7 +9,7 @@ ENV DUMB_INIT_VERSION=1.2.1 \
+     MAILHOG_VERSION=v1.0.0 \
+     MHSENDMAIL_VERSION=v0.2.0 \
+     PECO_VERSION=v0.5.2 \
+-    HOST_USER_NAME=lemp \
++    HOST_USER_NAME=lamp \
+     PHP_VERSION=7.2 \
+     NODEJS_VERSION=9 \
+     HOST_USER_UID=1000 \
 @@ -45,9 +45,10 @@ RUN apt-get update && apt-get -y install --no-install-recommends apt-utils \
    html2text \
    less \

@@ -11,14 +11,18 @@ if [ ! "$(ls -A "/var/www")" ]; then
   chown $HOST_USER_NAME:$HOST_USER_NAME /var/www
 fi
 
+nohup mailhog &
+
 service apache2 start
 
+service php$PHP_VERSION-fpm start
+
 service mysql start
+
+service ssh start
 
 # Make sure that password for debian system account is still valid.
 DEBIAN_PASS=$(cat /etc/mysql/debian.cnf | awk '/password/ {print $3; exit}') && \
 mysql -uroot -p$MYSQL_ROOT_PASS -e"GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '$DEBIAN_PASS' WITH GRANT OPTION"
-
-nohup mailhog &
 
 tail -f /var/log/apache2/access.log

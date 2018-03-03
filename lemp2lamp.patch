@@ -1,0 +1,287 @@
+diff --git a/20-development-apache2.ini b/20-development-apache2.ini
+new file mode 100644
+index 0000000..f909ee1
+--- /dev/null
++++ b/20-development-apache2.ini
+@@ -0,0 +1,7 @@
++error_reporting = -1
++max_execution_time = 60
++memory_limit = 256M
++display_errors = On
++post_max_size = 16M
++upload_max_filesize = 32M
++sendmail_path = /usr/local/bin/mhsendmail
+diff --git a/20-development-fpm.ini b/20-development-fpm.ini
+deleted file mode 100644
+index f909ee1..0000000
+--- a/20-development-fpm.ini
++++ /dev/null
+@@ -1,7 +0,0 @@
+-error_reporting = -1
+-max_execution_time = 60
+-memory_limit = 256M
+-display_errors = On
+-post_max_size = 16M
+-upload_max_filesize = 32M
+-sendmail_path = /usr/local/bin/mhsendmail
+diff --git a/Dockerfile b/Dockerfile
+index cce8683..950b425 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -45,9 +45,10 @@ RUN apt-get update && apt-get -y install --no-install-recommends apt-utils \
+   html2text \
+   less \
+   bash-completion \
+-  nginx \
++  apache2 \
+   mysql-server \
+   mysql-client \
++  libapache2-mod-php \
+   php-xdebug \
+   php$PHP_VERSION-xml \
+   php$PHP_VERSION-mysql \
+@@ -57,7 +58,6 @@ RUN apt-get update && apt-get -y install --no-install-recommends apt-utils \
+   php$PHP_VERSION-json \
+   php$PHP_VERSION-mbstring \
+   php$PHP_VERSION-cgi \
+-  php$PHP_VERSION-fpm \
+   php$PHP_VERSION \
+   php$PHP_VERSION-apcu \
+   silversearcher-ag \
+@@ -73,9 +73,13 @@ RUN wget https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INIT_VERSION
+ # Copy sudoers file.
+ COPY sudoers /etc/sudoers
+ 
+-# Update default Nginx configuration.
+-COPY sites-available/default /etc/nginx/sites-available/default
+-RUN sed -i "s/%PHP_VERSION%/$PHP_VERSION/g" /etc/nginx/sites-available/default
++# Enable mod rewrite.
++RUN a2enmod rewrite
++# Update default Apache configuration.
++COPY sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
++
++# Set server name.
++RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
+ 
+ # Change MySql root password.
+ RUN service mysql start && mysqladmin -u root password $MYSQL_ROOT_PASS
+@@ -88,11 +92,11 @@ RUN service mysql start && \
+     mysql -uroot -p$MYSQL_ROOT_PASS -e"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASS' WITH GRANT OPTION";
+ 
+ # Change PHP settings.
+-COPY 20-development-fpm.ini /etc/php/$PHP_VERSION/fpm/conf.d/20-development.ini
++COPY 20-development-apache2.ini /etc/php/$PHP_VERSION/apache2/conf.d/20-development.ini
+ COPY 20-development-cli.ini /etc/php/$PHP_VERSION/cli/conf.d/20-development.ini
+ 
+ # Xdebug does not support PHP 7.2 yet.
+-COPY 20-xdebug.ini /etc/php/$PHP_VERSION/fpm/conf.d/20-xdebug.ini
++COPY 20-xdebug.ini /etc/php/$PHP_VERSION/apache2/conf.d/20-xdebug.ini
+ COPY 20-xdebug.ini /etc/php/$PHP_VERSION/cli/conf.d/20-xdebug.ini
+ 
+ # Create host user.
+@@ -128,16 +132,14 @@ RUN wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VERSION/phpMyAdmin-
+     rm phpMyAdmin-$PHPMYADMIN_VERSION-all-languages.zip
+ COPY config.inc.php /usr/share/phpmyadmin/config.inc.php
+ RUN sed -i "s/root_pass/$MYSQL_ROOT_PASS/" /usr/share/phpmyadmin/config.inc.php
+-COPY sites-available/phpmyadmin /etc/nginx/sites-available/phpmyadmin
+-RUN sed -i "s/%PHP_VERSION%/$PHP_VERSION/g" /etc/nginx/sites-available/phpmyadmin
+-RUN ln -s /etc/nginx/sites-available/phpmyadmin /etc/nginx/sites-enabled/phpmyadmin
++COPY sites-available/phpmyadmin.conf /etc/apache2/sites-available/phpmyadmin.conf
++RUN a2ensite phpmyadmin
+ 
+ # Install Adminer
+ RUN mkdir /usr/share/adminer && \
+     wget -O /usr/share/adminer/adminer.php https://www.adminer.org/static/download/$ADMINER_VERSION/adminer-$ADMINER_VERSION.php
+-COPY sites-available/adminer /etc/nginx/sites-available/adminer
+-RUN sed -i "s/%PHP_VERSION%/$PHP_VERSION/g" /etc/nginx/sites-available/adminer
+-RUN ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
++COPY sites-available/adminer.conf /etc/apache2/sites-available/adminer.conf
++RUN a2ensite adminer
+ 
+ # Install Composer.
+ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+diff --git a/cmd.sh b/cmd.sh
+index 1cef09a..88a1e6e 100644
+--- a/cmd.sh
++++ b/cmd.sh
+@@ -13,7 +13,7 @@ fi
+ 
+ nohup mailhog &
+ 
+-service nginx start
++service apache2 start
+ 
+ service php$PHP_VERSION-fpm start
+ 
+@@ -25,4 +25,4 @@ service ssh start
+ DEBIAN_PASS=$(cat /etc/mysql/debian.cnf | awk '/password/ {print $3; exit}') && \
+ mysql -uroot -p$MYSQL_ROOT_PASS -e"GRANT ALL PRIVILEGES ON *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '$DEBIAN_PASS' WITH GRANT OPTION"
+ 
+-tail -f /var/log/nginx/access.log
++tail -f /var/log/apache2/access.log
+diff --git a/sites-available/000-default.conf b/sites-available/000-default.conf
+new file mode 100644
+index 0000000..6e95894
+--- /dev/null
++++ b/sites-available/000-default.conf
+@@ -0,0 +1,17 @@
++<VirtualHost *:80>
++
++  ServerName localhost
++  ServerAdmin webmaster@localhost
++  DocumentRoot /var/www
++
++  ErrorLog ${APACHE_LOG_DIR}/error.log
++  CustomLog ${APACHE_LOG_DIR}/access.log combined
++
++  <Directory /var/www/>
++    Options Indexes FollowSymLinks MultiViews
++    AllowOverride All
++    Order allow,deny
++    allow from all
++  </Directory>
++
++</VirtualHost>
+diff --git a/sites-available/adminer b/sites-available/adminer
+deleted file mode 100644
+index d5cf71f..0000000
+--- a/sites-available/adminer
++++ /dev/null
+@@ -1,14 +0,0 @@
+-server {
+-
+-  listen 8089;
+-
+-  root /usr/share/adminer;
+-
+-  index adminer.php;
+-
+-  location ~ \.php$ {
+-    include snippets/fastcgi-php.conf;
+-    fastcgi_pass unix:/run/php/php%PHP_VERSION%-fpm.sock;
+-  }
+-  
+-}
+diff --git a/sites-available/adminer.conf b/sites-available/adminer.conf
+new file mode 100644
+index 0000000..522e3d2
+--- /dev/null
++++ b/sites-available/adminer.conf
+@@ -0,0 +1,19 @@
++listen 8089
++<VirtualHost *:8089>
++
++  ServerName localhost
++  ServerAdmin webmaster@localhost
++  DocumentRoot /usr/share/adminer
++  DirectoryIndex adminer.php
++
++  ErrorLog ${APACHE_LOG_DIR}/error.log
++  CustomLog ${APACHE_LOG_DIR}/access.log combined
++
++  <Directory /usr/share/adminer>
++    Options Indexes FollowSymLinks MultiViews
++    AllowOverride All
++    Order allow,deny
++    allow from all
++  </Directory>
++
++</VirtualHost>
+diff --git a/sites-available/default b/sites-available/default
+deleted file mode 100644
+index 3c02fa3..0000000
+--- a/sites-available/default
++++ /dev/null
+@@ -1,48 +0,0 @@
+-#
+-# Default server configuration
+-#
+-server {
+-  listen 80 default_server;
+-  
+-  # SSL configuration
+-  #
+-  # listen 443 ssl default_server;
+-  # listen [::]:443 ssl default_server;
+-  #
+-  # Note: You should disable gzip for SSL traffic.
+-  # See: https://bugs.debian.org/773332
+-  #
+-  # Read up on ssl_ciphers to ensure a secure configuration.
+-  # See: https://bugs.debian.org/765782
+-  #
+-  # Self signed certs generated by the ssl-cert package
+-  # Don't use them in a production server!
+-  #
+-  # include snippets/snakeoil.conf;
+-
+-  root /var/www;
+-
+-  index index.html index.htm index.php;
+-
+-  location / {
+-    try_files $uri $uri/ =404;
+-    autoindex on;
+-  }
+-
+-  location ~ \.php$ {
+-    include snippets/fastcgi-php.conf;
+-    fastcgi_read_timeout 500;
+-    fastcgi_buffers 16 16k;
+-    fastcgi_buffer_size 32k;
+-    fastcgi_pass unix:/run/php/php%PHP_VERSION%-fpm.sock;
+-  }
+-  
+-  location ~ /\. {
+-    deny all;
+-  }
+-
+-  location ~ (.*/docroot) {
+-    try_files $uri $1/index.php?$query_string;
+-  }
+-
+-}
+diff --git a/sites-available/phpmyadmin b/sites-available/phpmyadmin
+deleted file mode 100644
+index 53b6e21..0000000
+--- a/sites-available/phpmyadmin
++++ /dev/null
+@@ -1,14 +0,0 @@
+-server {
+-
+-  listen 8088;
+-
+-  root /usr/share/phpmyadmin;
+-
+-  index index.php;
+-
+-  location ~ \.php$ {
+-    include snippets/fastcgi-php.conf;
+-    fastcgi_pass unix:/run/php/php%PHP_VERSION%-fpm.sock;
+-  }
+-  
+-}
+diff --git a/sites-available/phpmyadmin.conf b/sites-available/phpmyadmin.conf
+new file mode 100644
+index 0000000..c4ecc1c
+--- /dev/null
++++ b/sites-available/phpmyadmin.conf
+@@ -0,0 +1,18 @@
++listen 8088
++<VirtualHost *:8088>
++
++  ServerName localhost
++  ServerAdmin webmaster@localhost
++  DocumentRoot /usr/share/phpmyadmin
++
++  ErrorLog ${APACHE_LOG_DIR}/error.log
++  CustomLog ${APACHE_LOG_DIR}/access.log combined
++
++  <Directory /usr/share/phpmyadmin>
++    Options Indexes FollowSymLinks MultiViews
++    AllowOverride All
++    Order allow,deny
++    allow from all
++  </Directory>
++
++</VirtualHost>

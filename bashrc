@@ -7,4 +7,4 @@ export PS1="\[\e[42;30m\] \u@\h \[\e[0m\]\[\e[43;30m\] \w \[\e[0m\]\[\e[46;30m\]
 alias mc='. /usr/share/mc/bin/mc-wrapper.sh'
 
 cd /var/www
-echo -e "\e[96mWELCOME TO DRUPAL LEMP DEVELOPMENT STACK!\e[0m"
+echo -e "\e[96mWELCOME TO DRUPAL LAMP DEVELOPMENT STACK!\e[0m"

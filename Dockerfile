@@ -75,10 +75,17 @@ RUN wget https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INIT_VERSION
 # Copy sudoers file.
 COPY sudoers /etc/sudoers
 
+# Install SSL.
+COPY request-ssl.sh /root
+RUN chmod +x /root/request-ssl.sh
+RUN /root/request-ssl.sh
+
 # Enable mod rewrite.
-RUN a2enmod rewrite
+RUN a2enmod rewrite ssl
 # Update default Apache configuration.
 COPY sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY sites-available/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+RUN a2ensite default-ssl.conf
 
 # Set server name.
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf

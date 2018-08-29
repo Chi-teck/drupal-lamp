@@ -134,7 +134,7 @@ RUN wget https://github.com/mailhog/MailHog/releases/download/$MAILHOG_VERSION/M
 RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && \
     chmod +x jq-linux64 && mv jq-linux64 /usr/local/bin/jq
 
-# Install PhpMyAdmin
+# Install PhpMyAdmin.
 RUN wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VERSION/phpMyAdmin-$PHPMYADMIN_VERSION-all-languages.zip && \
     unzip phpMyAdmin-$PHPMYADMIN_VERSION-all-languages.zip && \
     mv phpMyAdmin-$PHPMYADMIN_VERSION-all-languages /usr/share/phpmyadmin && \
@@ -144,7 +144,7 @@ RUN sed -i "s/root_pass/$MYSQL_ROOT_PASS/" /usr/share/phpmyadmin/config.inc.php
 COPY sites-available/phpmyadmin.conf /etc/apache2/sites-available/phpmyadmin.conf
 RUN a2ensite phpmyadmin
 
-# Install Adminer
+# Install Adminer.
 RUN mkdir /usr/share/adminer && \
     wget -O /usr/share/adminer/adminer.php https://www.adminer.org/static/download/$ADMINER_VERSION/adminer-$ADMINER_VERSION.php
 COPY sites-available/adminer.conf /etc/apache2/sites-available/adminer.conf
@@ -172,6 +172,10 @@ COPY dumper.php /usr/share/php
 # Install PHP coding standards Fixer.
 RUN mkdir /opt/php-cs-fixer
 RUN COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/php-cs-fixer require friendsofphp/php-cs-fixer
+
+# Install PHPUnit.
+ RUN mkdir /opt/phpunit
+ RUN COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/phpunit require phpunit/phpunit
 
 # Install Drush.
 RUN wget -O /usr/local/bin/drush \
@@ -235,5 +239,5 @@ RUN rm -r /var/www/html
 COPY cmd.sh /root/cmd.sh
 RUN chmod +x /root/cmd.sh
 
-# Default command..
+# Default command.
 CMD ["dumb-init", "-c", "--", "/root/cmd.sh"]

@@ -3,9 +3,9 @@ FROM debian:jessie
 # Set variables.
 ENV DUMB_INIT_VERSION=1.2.1 \
     DRUSH_VERSION=8.1.17 \
-    DCG_VERSION=1.25.1 \
-    PHPMYADMIN_VERSION=4.8.1 \
-    ADMINER_VERSION=4.6.2 \
+    DCG_VERSION=1.26.0 \
+    PHPMYADMIN_VERSION=4.8.3 \
+    ADMINER_VERSION=4.6.3 \
     MAILHOG_VERSION=v1.0.0 \
     MHSENDMAIL_VERSION=v0.2.0 \
     PECO_VERSION=v0.5.3 \
@@ -211,7 +211,7 @@ RUN apt-get update && apt-get install -y curl apt-transport-https && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt-get install -y yarn
 
-# Copy MySL data to a temporary location.
+# Copy MySQL data to a temporary location.
 RUN service mysql stop && mkdir /var/lib/_mysql && cp -R /var/lib/mysql/* /var/lib/_mysql
 
 # Set host user directory owner.

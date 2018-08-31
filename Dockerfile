@@ -34,6 +34,7 @@ RUN apt-get update && apt-get -y install --no-install-recommends apt-utils \
   sudo \
   net-tools \
   apt-utils \
+  gnupg \
   curl \
   git \
   vim \
@@ -78,8 +79,7 @@ COPY sudoers /etc/sudoers
 
 # Install SSL.
 COPY request-ssl.sh /root
-RUN chmod +x /root/request-ssl.sh
-RUN /root/request-ssl.sh
+RUN bash /root/request-ssl.sh && rm root/request-ssl.sh
 
 # Enable mod rewrite.
 RUN a2enmod rewrite ssl
@@ -93,6 +93,7 @@ RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 
 # Configure MySQL.
 RUN sed -i "s/bind-address/#bind-address/" /etc/mysql/my.cnf && \
+    service mysql start && \
     mysql -uroot -e"SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MYSQL_ROOT_PASSWORD')" && \
     mysql -uroot -e"UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE user = 'root'" && \
     mysql -uroot -e"FLUSH PRIVILEGES"
@@ -152,9 +153,8 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/lo
 
 # Install Drupal Coder.
 RUN mkdir /opt/drupal-coder
-RUN COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/drupal-coder require drupal/coder
-# Register Drupal codding standards.
-RUN phpcs --config-set installed_paths /opt/drupal-coder/vendor/drupal/coder/coder_sniffer
+RUN COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/drupal-coder require drupal/coder && \
+    phpcs --config-set installed_paths /opt/drupal-coder/vendor/drupal/coder/coder_sniffer
 
 # Install Symfony console autocomplete.
 RUN mkdir /opt/symfony-console-autocomplete
@@ -243,7 +243,7 @@ COPY cmd.sh /root/cmd.sh
 RUN chmod +x /root/cmd.sh
 
 # Set default user.
-USER lemp
+USER lamp
 
 # Default command.
 CMD ["sudo", "-E", "dumb-init", "-c", "--", "/root/cmd.sh"]

@@ -2,7 +2,7 @@
 
 # Return orignal mysql directory if the mounted one is empty.
 if [ ! "$(ls -A "/var/lib/mysql")" ]; then
-  cp -R /var/lib/_mysql/* /var/lib/mysql
+  cp -R /var/lib/mysql_default/* /var/lib/mysql
   chown -R mysql:mysql /var/lib/mysql
 fi
 

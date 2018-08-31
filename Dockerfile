@@ -91,8 +91,12 @@ RUN a2ensite default-ssl.conf
 # Set server name.
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 
-# Change MySql root password.
-RUN service mysql start && mysqladmin -u root password $MYSQL_ROOT_PASS
+# Configure MySQL.
+RUN sed -i "s/bind-address/#bind-address/" /etc/mysql/my.cnf && \
+    find /var/lib/mysql -type f -exec touch {} \; && \
+    service mysql start && \
+    mysqladmin -u root password $MYSQL_ROOT_PASS && \
+    service mysql start && mysqladmin -u root password $MYSQL_ROOT_PASS
 
 # Disable bind-address.
 RUN sed -i "s/bind-address/#bind-address/" /etc/mysql/my.cnf
@@ -230,8 +234,8 @@ RUN apt-get update && apt-get install -y curl apt-transport-https && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && apt-get install -y yarn
 
-# Copy MySQL data to a temporary location.
-RUN service mysql stop && mkdir /var/lib/_mysql && cp -R /var/lib/mysql/* /var/lib/_mysql
+# Preserve default MySQL data.
+RUN mkdir /var/lib/mysql_default && cp -R /var/lib/mysql/* /var/lib/mysql_default
 
 # Set host user directory owner.
 RUN chown -R $HOST_USER_NAME:$HOST_USER_NAME /home/$HOST_USER_NAME

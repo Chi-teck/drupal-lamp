@@ -54,8 +54,8 @@ RUN apt-get update && apt-get -y install --no-install-recommends apt-utils \
   less \
   bash-completion \
   apache2 \
-  mysql-server \
-  mysql-client \
+  mariadb-server \
+  mariadb-client \
   libapache2-mod-php \
   php-xdebug \
   php$PHP_VERSION-xml \

@@ -105,6 +105,8 @@ COPY 20-development-cli.ini /etc/php/$PHP_VERSION/cli/conf.d/20-development.ini
 # Xdebug does not support PHP 7.2 yet.
 COPY 20-xdebug.ini /etc/php/$PHP_VERSION/apache2/conf.d/20-xdebug.ini
 COPY 20-xdebug.ini /etc/php/$PHP_VERSION/cli/conf.d/20-xdebug.ini
+COPY xdebug.sh /usr/local/bin/xdebug
+RUN chmod +x /usr/local/bin/xdebug
 
 # Create host user.
 RUN useradd $HOST_USER_NAME -m -u$HOST_USER_UID -Gsudo -s /bin/bash

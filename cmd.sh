@@ -15,8 +15,6 @@ nohup mailhog &
 
 service apache2 start
 
-service php$PHP_VERSION-fpm start
-
 service mysql start
 
 service ssh start

@@ -98,13 +98,11 @@ RUN sed -i "s/bind-address/#bind-address/" /etc/mysql/my.cnf && \
     mysql -uroot -e"UPDATE mysql.user SET plugin = 'mysql_native_password' WHERE user = 'root'" && \
     mysql -uroot -e"FLUSH PRIVILEGES"
 
-# Change PHP settings.
-COPY 20-development-apache2.ini /etc/php/$PHP_VERSION/apache2/conf.d/20-development.ini
-COPY 20-development-cli.ini /etc/php/$PHP_VERSION/cli/conf.d/20-development.ini
+# Override some PHP settings.
+COPY 30-local-apache2.ini /etc/php/$PHP_VERSION/apache2/conf.d/30-local.ini
+COPY 30-local-cli.ini /etc/php/$PHP_VERSION/cli/conf.d/30-local.ini
 
-# Xdebug does not support PHP 7.2 yet.
-COPY 20-xdebug.ini /etc/php/$PHP_VERSION/apache2/conf.d/20-xdebug.ini
-COPY 20-xdebug.ini /etc/php/$PHP_VERSION/cli/conf.d/20-xdebug.ini
+# Install Xdebug manager.
 COPY xdebug.sh /usr/local/bin/xdebug
 RUN chmod +x /usr/local/bin/xdebug
 

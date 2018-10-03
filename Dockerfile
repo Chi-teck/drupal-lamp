@@ -246,8 +246,5 @@ RUN rm -r /var/www/html
 COPY cmd.sh /root/cmd.sh
 RUN chmod +x /root/cmd.sh
 
-# Set default user.
-USER lamp
-
 # Default command.
-CMD ["sudo", "-E", "dumb-init", "-c", "--", "/root/cmd.sh"]
+CMD ["dumb-init", "-c", "--", "/root/cmd.sh"]

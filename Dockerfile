@@ -166,8 +166,8 @@ RUN mkdir /opt/symfony-console-autocomplete && \
 
 # Install VarDumper Component.
 RUN mkdir /opt/var-dumper && \
-    COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/var-dumper require symfony/var-dumper:^4.1 && \
-    COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/var-dumper require symfony/console:^4.0
+    COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/var-dumper require symfony/var-dumper:^4.2 && \
+    COMPOSER_BIN_DIR=/usr/local/bin composer --working-dir=/opt/var-dumper require symfony/console:^4.2
 RUN mkdir /usr/share/php
 COPY dumper.php /usr/share/php
 

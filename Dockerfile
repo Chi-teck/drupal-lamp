@@ -127,7 +127,12 @@ RUN cat /tmp/bashrc >> /home/$HOST_USER_NAME/.bashrc && rm /tmp/bashrc
 # Install HR.
 RUN wget https://raw.githubusercontent.com/LuRsT/hr/master/hr
 RUN chmod +x hr
-RUN mv hr /usr/local/bin/hr
+RUN mv hr /usr/local/bin/
+
+# Install ANSI.
+RUN wget https://raw.githubusercontent.com/fidian/ansi/master/ansi
+RUN chmod +x ansi
+RUN mv ansi /usr/local/bin/
 
 # Install MailHog.
 RUN wget https://github.com/mailhog/MailHog/releases/download/$MAILHOG_VERSION/MailHog_linux_amd64 && \

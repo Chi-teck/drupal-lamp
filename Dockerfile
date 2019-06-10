@@ -2,9 +2,9 @@ FROM debian:stretch
 
 # Set variables.
 ENV DUMB_INIT_VERSION=1.2.2 \
-    DRUSH_VERSION=8.1.18 \
-    DCG_VERSION=1.28.0 \
-    PHPMYADMIN_VERSION=4.8.5 \
+    DRUSH_VERSION=8.2.3 \
+    DCG_VERSION=1.29.2 \
+    PHPMYADMIN_VERSION=4.9.0.1 \
     ADMINER_VERSION=4.7.1 \
     MAILHOG_VERSION=v1.0.0 \
     MHSENDMAIL_VERSION=v0.2.0 \
@@ -123,6 +123,11 @@ RUN sed -i "s/%USER%/$HOST_USER_NAME/g" /home/$HOST_USER_NAME/.config/mc/hotlist
     sed -i "s/%PHP_VERSION%/$PHP_VERSION/g" /home/$HOST_USER_NAME/.config/mc/hotlist
 COPY bashrc /tmp/bashrc
 RUN cat /tmp/bashrc >> /home/$HOST_USER_NAME/.bashrc && rm /tmp/bashrc
+
+# Install HR.
+RUN wget https://raw.githubusercontent.com/LuRsT/hr/master/hr
+RUN chmod +x hr
+RUN mv hr /usr/local/bin/hr
 
 # Install MailHog.
 RUN wget https://github.com/mailhog/MailHog/releases/download/$MAILHOG_VERSION/MailHog_linux_amd64 && \

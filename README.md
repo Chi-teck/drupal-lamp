@@ -23,7 +23,7 @@
 
 Basically you can create the container in two ways. The first one (classic) is exposing container services through the explicit port mapping.
 ```bash
-#! /bin/bash
+#!/usr/bin/env bash
 
 PROJECT_NAME=example
 PROJECT_DIR=/var/docker/projects/$PROJECT_NAME
@@ -43,7 +43,7 @@ Having this done you can access web server index page by navigating to the follo
 
 The second way requires you to create custom docker network.
 ```bash
-#! /bin/bash
+#!/usr/bin/env bash
 
 docker network create \
   --subnet=172.28.0.0/16 \

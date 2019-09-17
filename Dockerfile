@@ -142,6 +142,7 @@ RUN wget https://github.com/mailhog/MailHog/releases/download/$MAILHOG_VERSION/M
     chmod +x mhsendmail_linux_amd64 && \
     mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
 
+# Install jq.
 RUN wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && \
     chmod +x jq-linux64 && mv jq-linux64 /usr/local/bin/jq
 

@@ -52,7 +52,7 @@ docker network create \
 ```
 Now the container can be created as follows:
 ```bash
-#! /bin/bash
+#!/usr/bin/env bash
 
 PROJECT_NAME=example
 PROJECT_DIR=/var/docker/projects/$PROJECT_NAME

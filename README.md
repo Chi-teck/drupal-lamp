@@ -87,7 +87,7 @@ echo 'alias example="docker start example && docker exec -itu lamp example bash"
 ```
 
 ## Xdebug
-Xdebug is switched off by default by performance reason. Run the following
+Xdebug is switched off by default for performance reason. Run the following
 command to switch it on before debugging.
 ```
 sudo xdebug on

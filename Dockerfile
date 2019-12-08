@@ -3,7 +3,7 @@ FROM debian:stretch
 # Set variables.
 ENV DUMB_INIT_VERSION=1.2.2 \
     DRUSH_VERSION=8.3.2 \
-    DCG_VERSION=2.0.0-beta4 \
+    DCG_VERSION=2.0.0-beta5 \
     PHPMYADMIN_VERSION=4.9.2 \
     ADMINER_VERSION=4.7.5 \
     MAILHOG_VERSION=v1.0.0 \

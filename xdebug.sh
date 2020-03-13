@@ -6,9 +6,10 @@ if [ $EUID -ne 0 ]; then
 fi
 
 if [ "$1" = 'on' ]; then
-  phpenmod xdebug && service apache2 reload
+  # Apache fails with "signal Segmentation fault" when reload is used.
+  phpenmod xdebug && service apache2 restart
 elif [ "$1" = 'off' ]; then
-  phpdismod xdebug && service apache2 reload
+  phpdismod xdebug && service apache2 restart
 else
   >&2 echo Usage: $(basename -- "$0") '[on|off]';
   exit 1

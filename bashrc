@@ -1,6 +1,4 @@
-#
 # Task wrapper that searches for task file recursively.
-#
 function task {
 
   # Do not proceed if '--taskfile' option was supplied.

@@ -13,7 +13,8 @@
 * Composer
 * PHP-CS-Fixer
 * Drush
-* Drupalcs
+* Drupal Check
+* Drupal RC
 * Drupal Code Generator
 * MailHog
 * NPM tools (Grunt, Gulp, etc)

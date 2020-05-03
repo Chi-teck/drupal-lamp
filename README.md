@@ -102,7 +102,6 @@ sudo xdebug on
 * 3306 - MySQL
 * 8025 - MailHog web UI
 * 8088 - PhpMyAdmin
-* 8089 - Adminer
 
 ## Access
 * Host user name - lamp

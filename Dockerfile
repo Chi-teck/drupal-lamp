@@ -5,7 +5,6 @@ ENV DUMB_INIT_VERSION=1.2.2 \
     DRUSH_VERSION=8.3.2 \
     DCG_VERSION=2.0.0-beta6 \
     PHPMYADMIN_VERSION=5.0.2 \
-    ADMINER_VERSION=4.7.6 \
     MAILHOG_VERSION=v1.0.0 \
     MHSENDMAIL_VERSION=v0.2.0 \
     BAT_VERSION=0.15.0 \
@@ -157,12 +156,6 @@ RUN sed -i "s/root_pass/$MYSQL_ROOT_PASSWORD/" /usr/share/phpmyadmin/config.inc.
 COPY sites-available/phpmyadmin.conf /etc/apache2/sites-available/phpmyadmin.conf
 RUN a2ensite phpmyadmin
 
-# Install Adminer.
-RUN mkdir /usr/share/adminer && \
-    wget -O /usr/share/adminer/adminer.php https://www.adminer.org/static/download/$ADMINER_VERSION/adminer-$ADMINER_VERSION.php
-COPY sites-available/adminer.conf /etc/apache2/sites-available/adminer.conf
-RUN a2ensite adminer
-
 # Install Composer.
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
@@ -229,8 +222,6 @@ COPY task.complete.sh /etc/bash_completion.d/task.complete.sh
 # Install Node.js and NPM.
 RUN curl -sL https://deb.nodesource.com/setup_$NODEJS_VERSION.x | bash - && apt-get install -y nodejs
 
-# Install NPM tools.
-RUN npm i -g grunt-cli gulp-cli eslint csslint stylelint
 
 # Install Yarn.
 RUN apt-get update && apt-get install -y curl apt-transport-https && \

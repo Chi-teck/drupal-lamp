@@ -17,7 +17,7 @@
 * Drupal RC
 * Drupal Code Generator
 * MailHog
-* NPM tools (Grunt, Gulp, etc)
+* Node.js, npm, Yarn
 * SSH server
 
 ## Creating the container

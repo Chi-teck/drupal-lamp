@@ -1,9 +1,7 @@
 # Docker LAMP stack for Drupal development
-
 **The container is intended for local usage and should never be used in production environment.**
 
 ## What is inside
-
 * Apache
 * MariaDB
 * PHP 7
@@ -21,7 +19,6 @@
 * SSH server
 
 ## Creating the container
-
 Basically you can create the container in two ways. The first one (classic) is exposing container services through the explicit port mapping.
 ```bash
 #!/usr/bin/env bash
@@ -76,7 +73,6 @@ The IP address may be whatever you like but make sure it belongs the subnet you 
 New containers can be attached to the same network or to a distinct one for better isolation.
 
 ## Connecting to the container
-
 It is strongly recommended you connect to the container using **lamp** account.
 ```
 docker exec -itu lamp:www-data example bash

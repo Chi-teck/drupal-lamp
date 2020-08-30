@@ -191,11 +191,6 @@ RUN mkdir /opt/php-cs-fixer && \
     composer --working-dir=/opt/php-cs-fixer require friendsofphp/php-cs-fixer && \
     ln -s /opt/php-cs-fixer/vendor/bin/php-cs-fixer /usr/local/bin/php-cs-fixer
 
-# Install PHPUnit.
-RUN mkdir /opt/phpunit && \
-    composer --working-dir=/opt/phpunit require phpunit/phpunit && \
-    ln -s /opt/phpunit/vendor/bin/phpunit /usr/local/bin/phpunit
-
 # Install Drush.
 RUN wget -O /usr/local/bin/drush \
     https://github.com/drush-ops/drush/releases/download/$DRUSH_VERSION/drush.phar && \

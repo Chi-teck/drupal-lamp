@@ -1,3 +1,5 @@
+❗This project is mot maintained anymore. See https://github.com/Chi-teck/docker-lamp
+
 # Docker LAMP stack for Drupal development
 **The container is intended for local usage and should never be used in production environment.**
 
